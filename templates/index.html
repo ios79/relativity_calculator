@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Relativity Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 20px;
+        }
+        .container {
+            background: white;
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+        .input-section, .result-section {
+            width: 48%;
+        }
+        .plot-container {
+            width: 100%;
+            margin: auto;
+        }
+        h2 {
+            color: #007BFF;
+        }
+        input {
+            padding: 8px;
+            width: 90%;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            color: gray;
+        }
+        input:focus {
+            color: black;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 95%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-box {
+            background: #e9f5ff;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: gray;
+        }
+        .explanation {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+    <script>
+        function handleFocus(input) {
+            if (input.value === input.defaultValue) {
+                input.value = '';
+                input.style.color = 'black';
+            }
+        }
+        function handleBlur(input) {
+            if (input.value === '') {
+                input.value = input.defaultValue;
+                input.style.color = 'gray';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>🚀 Relativity Calculator</h2>
+    <p>Experience Einstein’s Theory in Action! ⚡</p>
+
+    <div class="container">
+        <div class="input-section">
+            <form method="POST">
+                <label>Velocity (m/s): </label>
+                <input type="text" name="velocity" value="{{ request.form['velocity'] if 'velocity' in request.form else '20000000' }}" 
+                       onfocus="handleFocus(this)" onblur="handleBlur(this)" required><br><br>
+
+                <label>Rest Time (s): </label>
+                <input type="text" name="time" value="{{ request.form['time'] if 'time' in request.form else '10' }}" 
+                       onfocus="handleFocus(this)" onblur="handleBlur(this)"><br><br>
+
+                <label>Rest Length (m): </label>
+                <input type="text" name="length" value="{{ request.form['length'] if 'length' in request.form else '100' }}" 
+                       onfocus="handleFocus(this)" onblur="handleBlur(this)"><br><br>
+
+                <label>Mass (kg): </label>
+                <input type="text" name="mass" value="{{ request.form['mass'] if 'mass' in request.form else '50' }}" 
+                       onfocus="handleFocus(this)" onblur="handleBlur(this)"><br><br>
+
+                <button type="submit">Calculate</button>
+            </form>
+        </div>
+
+        <div class="result-section">
+            {% if result %}
+            <div class="result-box">
+                <h3>Results:</h3>
+                {% if result.error %}
+                    <p style="color: red;">{{ result.error }}</p>
+                {% else %}
+                    {% if result.time_dilation %}
+                        <p>⏳ Time Dilation: <strong>{{ result.time_dilation }} s</strong></p>
+                    {% endif %}
+                    {% if result.length_contraction %}
+                        <p>📏 Length Contraction: <strong>{{ result.length_contraction }} m</strong></p>
+                    {% endif %}
+                    {% if result.kinetic_energy %}
+                        <p>⚡ Kinetic Energy: <strong>{{ result.kinetic_energy }} J</strong></p>
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="plot-container">
+        {% if plot_path %}
+        <hr>
+        <h3>🚀 Why Can’t We Reach the Speed of Light? ⚡</h3>
+        <p>As an object's velocity approaches the speed of light, its mass increases exponentially!  
+           To reach light speed, you would need **infinite energy**, and your mass would become **infinite**—which is impossible!  
+           **This is why we can never travel at or beyond the speed of light.** 🤯</p>
+        <img src="{{ plot_path }}" alt="Mass Increase Graph">
+        {% endif %}
+    </div>
+
+    <div class="explanation">
+        <h3>🧑‍🚀 Understanding Your Results</h3>
+        <p><strong>1️⃣ Time Dilation (Time Slows Down) ⏳</strong></p>
+        <p>If you were traveling at <strong>{{ request.form['velocity'] }} m/s</strong>, 
+        you would feel only <strong>{{ request.form['time'] }} seconds</strong> pass, 
+        but someone on Earth would say <strong>"No, you actually took {{ result.time_dilation }} seconds!"</strong>  
+        👉 Time runs slower when moving fast! 🚀</p>
+
+        <p><strong>2️⃣ Length Contraction (Objects Shrink) 📏</strong></p>
+        <p>Your spaceship is normally <strong>{{ request.form['length'] }} meters</strong>,  
+        but because you're moving at <strong>{{ request.form['velocity'] }} m/s</strong>,  
+        it looks shorter at just <strong>{{ result.length_contraction }} meters</strong> to someone watching!  
+        👉 Moving objects **shrink** in length. 🤯</p>
+
+        <p><strong>3️⃣ Kinetic Energy (Super High Energy) ⚡</strong></p>
+        <p>At this speed, your <strong>{{ request.form['mass'] }} kg</strong> spaceship has  
+        <strong>{{ result.kinetic_energy }} Joules</strong> of energy—enough to cause a massive explosion! 💥  
+        👉 Moving super fast means you gain **insane energy!** ⚡</p>
+    </div>
+
+    <div class="footer">
+        <p>Created by <strong>Ioseb Vardoshvili</strong> | 🚀 Bringing Science to Life!</p>
+    </div>
+</body>
+</html>
